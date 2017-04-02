@@ -1,5 +1,6 @@
 package maptest.service;
 
+import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.Set;
 import maptest.api.TransportAPI;
 import maptest.model.LonLatRectangle;
 import maptest.model.locations.TransportLocation;
-import maptest.model.routes.RouteRequest;
+import maptest.model.routes.RouteIdentifier;
 import maptest.model.routes.TransportRoute;
 import maptest.service.callback.NewTransportsAddedCallback;
 import maptest.service.data.LocationPoint;
@@ -23,7 +24,7 @@ public class TransportLocationService {
     
     TIntObjectHashMap<Transport> transports = new TIntObjectHashMap<>();
     
-    TIntObjectHashMap<TransportRoute> routes = new TIntObjectHashMap<>();
+    THashMap<RouteIdentifier, TransportRoute> routes = new THashMap<>();
     
     
     NewTransportsAddedCallback newTransportsAddedCallback;
@@ -38,7 +39,7 @@ public class TransportLocationService {
     
     public void updateLocations(LonLatRectangle rectangle) {
         
-        System.out.println("TransportLocationService.updateLocations()");
+        System.out.println("\nTransportLocationService.updateLocations()");
         
         
         /* 1) Get locations in rectangle from API */
@@ -51,9 +52,9 @@ public class TransportLocationService {
         
         List<Transport> newTransports = new ArrayList<>();
         
-        Set<RouteRequest> unknownRouteRequests = new HashSet<>();
+        Set<RouteIdentifier> unknownRouteIdentifiers = new HashSet<>();
         
-        TIntObjectHashMap<List<Transport>> unknownRouteId2transports = new TIntObjectHashMap<>();
+        THashMap<RouteIdentifier, List<Transport>> unknownRouteIdentifier2transports = new THashMap<>();
         
         for (TransportLocation location : locations) {
             
@@ -76,32 +77,34 @@ public class TransportLocationService {
                 
                 // Find route for new transport
                 
-                TransportRoute route = routes.get(location.routeId);
+                RouteIdentifier routeIdentifier =
+                    new RouteIdentifier(
+                        location.routeId,
+                        location.directionId);
+                
+                TransportRoute route = routes.get(routeIdentifier);
                 
                 if (route != null) {
                     
                     // Ok, route already exists
                     
-                    transport.route = route;
+                    transport.addRoute(route);
                 }
                 else {
                     
                     // This route is unknown, adding it to request list
                     
-                    unknownRouteRequests.add(
-                        new RouteRequest(
-                            location.routeId,
-                            location.directionId));
+                    unknownRouteIdentifiers.add(routeIdentifier);
                     
-                    List<Transport> transportsWithUnknownRouteId =
-                        unknownRouteId2transports.get(location.routeId);
+                    List<Transport> transportsWithUnknownRoute =
+                        unknownRouteIdentifier2transports.get(routeIdentifier);
                     
-                    if (transportsWithUnknownRouteId == null) {
-                        transportsWithUnknownRouteId = new ArrayList<>();
-                        unknownRouteId2transports.put(location.routeId, transportsWithUnknownRouteId);
+                    if (transportsWithUnknownRoute == null) {
+                        transportsWithUnknownRoute = new ArrayList<>();
+                        unknownRouteIdentifier2transports.put(routeIdentifier, transportsWithUnknownRoute);
                     }
                     
-                    transportsWithUnknownRouteId.add(transport);                    
+                    transportsWithUnknownRoute.add(transport);                    
                 }        
             }
                         
@@ -127,26 +130,28 @@ public class TransportLocationService {
         
         /* 3) Get unknown routes from API */
         
-        System.out.println("Unknown routes: " + unknownRouteRequests.size());
+        System.out.println("Unknown routes: " + unknownRouteIdentifiers.size());
         
         int batchSize = 100; // How much routes API can return at once
         int couter = 0;        
         
-        List<RouteRequest> unknownRouteRequestsBatch = new ArrayList<>(batchSize);
+        List<RouteIdentifier> unknownRouteIdentifiersBatch = new ArrayList<>(batchSize);
         
         List<TransportRoute> newRoutes = new ArrayList<>();
                 
-        for (RouteRequest routeRequest : unknownRouteRequests) {
+        for (RouteIdentifier routeIdentifier : unknownRouteIdentifiers) {
             
-            unknownRouteRequestsBatch.add(routeRequest);
+            unknownRouteIdentifiersBatch.add(routeIdentifier);
             
-            if (unknownRouteRequestsBatch.size() == batchSize
-                || couter == unknownRouteRequests.size())
+            couter++;
+            
+            if (unknownRouteIdentifiersBatch.size() == batchSize
+                || couter == unknownRouteIdentifiers.size())
             {
                 newRoutes.addAll(
-                    api.getRoutes(unknownRouteRequestsBatch));
+                    api.getRoutes(unknownRouteIdentifiersBatch));
                 
-                unknownRouteRequestsBatch.clear();
+                unknownRouteIdentifiersBatch.clear();
             }
         }    
         
@@ -155,7 +160,13 @@ public class TransportLocationService {
         
         for (TransportRoute route : newRoutes) {
             
-            List<Transport> transports = unknownRouteId2transports.get(route.routeId);
+            RouteIdentifier routeIdentifier =
+                new RouteIdentifier(
+                    route.routeId,
+                    route.direction);
+            
+            List<Transport> transports =
+                unknownRouteIdentifier2transports.get(routeIdentifier);
             
             if (transports == null) {
                 System.out.println("Error in API: unexpected routeId");
@@ -163,11 +174,13 @@ public class TransportLocationService {
             }
             
             for (Transport transport : transports) {
-                transport.route = route;
+                transport.addRoute(route);
             }
             
-            routes.put(route.routeId, route);
+            routes.put(routeIdentifier, route);
         }
+        
+        System.out.println("Total transports: " + transports.size());
+        System.out.println("Total routes: " + routes.size());
     }
-    
 }

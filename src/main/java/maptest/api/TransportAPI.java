@@ -8,7 +8,7 @@ import maptest.model.LonLat;
 import maptest.model.LonLatRectangle;
 import maptest.model.locations.TransportLocation;
 import maptest.model.locations.TransportLocationReponse;
-import maptest.model.routes.RouteRequest;
+import maptest.model.routes.RouteIdentifier;
 import maptest.model.routes.TransportRoute;
 import maptest.model.routes.TransportRoutesResponce;
 
@@ -72,19 +72,19 @@ public class TransportAPI {
     }
     
 
-    public List<TransportRoute> getRoutes(List<RouteRequest> routeRequests) {
+    public List<TransportRoute> getRoutes(List<RouteIdentifier> routeIdentifier) {
 
         String routes = "";
         String routeDirections = "";
         
         int i = 0;
         
-        for (RouteRequest routeRequest : routeRequests) {
+        for (RouteIdentifier routeId : routeIdentifier) {
             
-            routes += routeRequest.routeId;
-            routeDirections += routeRequest.routeDirection;
+            routes += routeId.routeId;
+            routeDirections += routeId.routeDirection;
             
-            if (i < routeRequests.size() - 1) {
+            if (i < routeIdentifier.size() - 1) {
                 routes += ",";
                 routeDirections += ",";
             }
@@ -155,7 +155,7 @@ public class TransportAPI {
         List<TransportRoute> transportRoutes =
             access.getRoutes(
                 Collections.singletonList(
-                    new RouteRequest(1278, 0)));
+                    new RouteIdentifier(1278, 0)));
         
         for (TransportRoute route : transportRoutes) {
             

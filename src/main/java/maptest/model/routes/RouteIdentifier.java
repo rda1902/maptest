@@ -1,20 +1,20 @@
 package maptest.model.routes;
 
-public class RouteRequest {
+public class RouteIdentifier {
     
     public int routeId;
     
     public int routeDirection;
 
     
-    public RouteRequest(int routeId, int routeDirection) {
+    public RouteIdentifier(int routeId, int routeDirection) {
         this.routeId = routeId;
         this.routeDirection = routeDirection;
     }
 
     @Override
     public String toString() {
-        return "RouteInfo [routeId=" + routeId + ", routeDirection="
+        return "RouteIdentifier [routeId=" + routeId + ", routeDirection="
                 + routeDirection + "]";
     }
 
@@ -35,7 +35,7 @@ public class RouteRequest {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        RouteRequest other = (RouteRequest) obj;
+        RouteIdentifier other = (RouteIdentifier) obj;
         if (routeDirection != other.routeDirection)
             return false;
         if (routeId != other.routeId)

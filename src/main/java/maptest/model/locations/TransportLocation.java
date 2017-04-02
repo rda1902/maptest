@@ -9,28 +9,21 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "timestamp",
-    "position",
-    "direction",
-    "routeId",
-    "vehicleLabel",
-    "velocity",
-    "vehicleId",
-    "orderNumber",
-    "licensePlate",
-    "directionId"
-})
 public class TransportLocation {
 
+    @JsonProperty("vehicleId")
+    public int vehicleId;
+    
     @JsonProperty("timestamp")
     public String timestamp;
   
     @JsonProperty("position")
     public LonLat position;
+
+    @JsonProperty("velocity")
+    public int velocity;
     
     @JsonProperty("direction")
     public int direction;
@@ -38,14 +31,11 @@ public class TransportLocation {
     @JsonProperty("routeId")
     public Integer routeId;
     
+    @JsonProperty("directionId")
+    public int directionId;
+    
     @JsonProperty("vehicleLabel")
     public String vehicleLabel;
-    
-    @JsonProperty("velocity")
-    public int velocity;
-    
-    @JsonProperty("vehicleId")
-    public int vehicleId;
     
     @JsonProperty("orderNumber")
     public Integer orderNumber;
@@ -53,9 +43,6 @@ public class TransportLocation {
     @JsonProperty("licensePlate")
     public String licensePlate;
     
-    @JsonProperty("directionId")
-    public int directionId;
-
     
     public TransportLocation() {
     }

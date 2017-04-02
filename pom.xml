@@ -5,6 +5,14 @@
 	<artifactId>maptest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
+	<repositories>
+		<repository>
+			<id>dl.bintray.com</id>
+			<url>https://dl.bintray.com/gregor-laemmel/maven/</url>
+		</repository>
+	</repositories>
+
+
 	<dependencies>
 		
 		<dependency>
@@ -47,6 +55,12 @@
 		    <groupId>org.apache.httpcomponents</groupId>
 		    <artifactId>httpclient</artifactId>
 		    <version>4.5.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.fhpotsdam</groupId>
+			<artifactId>unfolding</artifactId>
+			<version>0.9.6</version>
 		</dependency>
 		
 		<!-- JSON serialization -->

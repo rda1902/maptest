@@ -13,22 +13,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "path",
-    "direction",
-    "routeId",
-    "stopIDs"
-})
 public class TransportRoute {
 
-    @JsonProperty("path")
-    public List<LonLat> path = null;
+    @JsonProperty("routeId")
+    public Integer routeId;
     
     @JsonProperty("direction")
     public int direction;
     
-    @JsonProperty("routeId")
-    public Integer routeId;
+    @JsonProperty("path")
+    public List<LonLat> path = null;
     
     @JsonProperty("stopIDs")
     public List<Integer> stopIDs = null;
@@ -39,24 +33,33 @@ public class TransportRoute {
         return ToStringBuilder.reflectionToString(this);
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-            .append(path).append(direction)
-            .append(routeId).append(stopIDs).toHashCode();
-    }
 
     @Override
-    public boolean equals(Object other) {
-        if (other == this) {
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + direction;
+        result = prime * result + ((routeId == null) ? 0 : routeId.hashCode());
+        return result;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        }
-        if ((other instanceof TransportRoute) == false) {
+        if (obj == null)
             return false;
-        }
-        TransportRoute rhs = ((TransportRoute) other);
-        return new EqualsBuilder().append(path, rhs.path)
-            .append(direction, rhs.direction).append(routeId, rhs.routeId)
-            .append(stopIDs, rhs.stopIDs).isEquals();
+        if (getClass() != obj.getClass())
+            return false;
+        TransportRoute other = (TransportRoute) obj;
+        if (direction != other.direction)
+            return false;
+        if (routeId == null) {
+            if (other.routeId != null)
+                return false;
+        } else if (!routeId.equals(other.routeId))
+            return false;
+        return true;
     }
 }

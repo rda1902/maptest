@@ -7,6 +7,7 @@ import java.util.TimerTask;
 
 import maptest.model.LonLat;
 import maptest.model.LonLatRectangle;
+import maptest.model.routes.TransportRoute;
 import maptest.service.TransportLocationService;
 import maptest.service.callback.NewTransportsAddedCallback;
 import maptest.service.data.LocationPoint;
@@ -15,9 +16,12 @@ import processing.core.PApplet;
 import processing.core.PGraphics;
 import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.geo.Location;
+import de.fhpotsdam.unfolding.marker.Marker;
 import de.fhpotsdam.unfolding.marker.SimplePointMarker;
 import de.fhpotsdam.unfolding.providers.OpenStreetMap.OpenStreetMapProvider;
 import de.fhpotsdam.unfolding.utils.MapUtils;
+import de.fhpotsdam.unfolding.utils.ScreenPosition;
+
 
 public class MapTestApplet extends PApplet {
 
@@ -25,6 +29,7 @@ public class MapTestApplet extends PApplet {
 
     UnfoldingMap map;
 
+    
     public class TransportMarker extends SimplePointMarker {
 
         Transport transport;
@@ -40,19 +45,47 @@ public class MapTestApplet extends PApplet {
 
             LocationPoint locationPoint = transport.getRecentLocationPoint();
 
+            // 1) Move marker to next location
+            
             setLocation(toLocation(locationPoint.position));
 
+            // 2) Draw route if marker is selected
+            
+            if (isSelected()) {
+
+                TransportRoute route = transport.getRoute(locationPoint.directionId);
+            
+                if (route != null) {
+                    
+                    List<LonLat> points = route.path;
+                    
+                    LonLat prevPoint = null; //points.get(points.size() - 1);
+                                        
+                    for (LonLat point : points) {
+                        
+                        if (prevPoint != null) {
+                            ScreenPosition from = map.getScreenPosition(toLocation(prevPoint));
+                            ScreenPosition to = map.getScreenPosition(toLocation(point));
+                            
+                            line(from.x, from.y, to.x, to.y);
+                        }
+                        
+                        prevPoint = point;
+                    }
+                }
+            }
+            
             super.draw(pg, x, y);
         }
     } 
     
+    
     public void setup() {
         
-        size(800, 600);
+        size(1680, 1050);
         map = new UnfoldingMap(this, new OpenStreetMapProvider());
-        
-        // Show map around the location in the given zoom level.
-        map.zoomAndPanTo(new Location(60.0, 30.0), 10);
+        map.zoomToLevel(10);
+        map.panTo(new Location(60.0, 30.0));
  
         // Add mouse and keyboard interactions
         MapUtils.createDefaultEventDispatcher(this, map);
@@ -101,11 +134,23 @@ public class MapTestApplet extends PApplet {
                 }
             }, 
             0,
-            1000
+            5000
         );
-        
     }
- 
+    
+    
+    @Override
+    public void mouseClicked()
+    {        
+        Marker hitMarker =
+            map.getFirstHitMarker(mouseX, mouseY);
+        
+        if (hitMarker != null) {
+        
+            hitMarker.setSelected(!hitMarker.isSelected());
+        }
+    }
+    
     
     public void draw() {
         
@@ -114,7 +159,7 @@ public class MapTestApplet extends PApplet {
             map.draw();
         }
     }
-    
+     
     
     protected Location toLocation(LonLat location) {
         

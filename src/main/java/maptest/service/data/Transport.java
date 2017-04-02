@@ -16,8 +16,8 @@ public class Transport {
     
     public String licensePlate;
     
-    public TransportRoute route;
     
+    protected TransportRoute[] routes = new TransportRoute[2]; // 2 directions
     
     protected Deque<LocationPoint> locations = new LinkedList<>();
 
@@ -34,6 +34,18 @@ public class Transport {
         this.vehicleLabel = vehicleLabel;
         this.orderNumber = orderNumber;
         this.licensePlate = licensePlate;
+    }
+    
+    
+    public synchronized void addRoute(TransportRoute route) {
+        
+        this.routes[route.direction] = route;
+    }
+    
+    
+    public synchronized TransportRoute getRoute(int direction) {
+        
+        return routes[direction];
     }
     
     
