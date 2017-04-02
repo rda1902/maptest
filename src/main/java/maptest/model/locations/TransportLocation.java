@@ -61,16 +61,16 @@ public class TransportLocation {
     }
 
     public TransportLocation(
-    	String timestamp,
-    	LonLat position,
-    	int direction,
-    	Integer routeId,
-    	String vehicleLabel,
-    	int velocity,
-    	int vehicleId,
-    	Integer orderNumber,
-    	String licensePlate,
-    	int directionId)
+        String timestamp,
+        LonLat position,
+        int direction,
+        Integer routeId,
+        String vehicleLabel,
+        int velocity,
+        int vehicleId,
+        Integer orderNumber,
+        String licensePlate,
+        int directionId)
     {
         this.timestamp = timestamp;
         this.position = position;
@@ -92,11 +92,11 @@ public class TransportLocation {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-        	.append(timestamp).append(position)
-        	.append(direction).append(routeId)
-        	.append(vehicleLabel).append(velocity)
-        	.append(vehicleId).append(orderNumber)
-        	.append(licensePlate).append(directionId).toHashCode();
+            .append(timestamp).append(position)
+            .append(direction).append(routeId)
+            .append(vehicleLabel).append(velocity)
+            .append(vehicleId).append(orderNumber)
+            .append(licensePlate).append(directionId).toHashCode();
     }
 
     @Override
@@ -109,15 +109,15 @@ public class TransportLocation {
         }
         TransportLocation rhs = ((TransportLocation) other);
         return new EqualsBuilder()
-        	.append(timestamp, rhs.timestamp)
-        	.append(position, rhs.position)
-        	.append(direction, rhs.direction)
-        	.append(routeId, rhs.routeId)
-        	.append(vehicleLabel, rhs.vehicleLabel)
-        	.append(velocity, rhs.velocity)
-        	.append(vehicleId, rhs.vehicleId)
-        	.append(orderNumber, rhs.orderNumber)
-        	.append(licensePlate, rhs.licensePlate)
-        	.append(directionId, rhs.directionId).isEquals();
+            .append(timestamp, rhs.timestamp)
+            .append(position, rhs.position)
+            .append(direction, rhs.direction)
+            .append(routeId, rhs.routeId)
+            .append(vehicleLabel, rhs.vehicleLabel)
+            .append(velocity, rhs.velocity)
+            .append(vehicleId, rhs.vehicleId)
+            .append(orderNumber, rhs.orderNumber)
+            .append(licensePlate, rhs.licensePlate)
+            .append(directionId, rhs.directionId).isEquals();
     }
 }

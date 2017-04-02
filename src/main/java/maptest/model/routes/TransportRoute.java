@@ -14,49 +14,49 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-	"path",
-	"direction",
-	"routeId",
-	"stopIDs"
+    "path",
+    "direction",
+    "routeId",
+    "stopIDs"
 })
 public class TransportRoute {
 
-	@JsonProperty("path")
-	public List<LonLat> path = null;
-	
-	@JsonProperty("direction")
-	public int direction;
-	
-	@JsonProperty("routeId")
-	public Integer routeId;
-	
-	@JsonProperty("stopIDs")
-	public List<Integer> stopIDs = null;
+    @JsonProperty("path")
+    public List<LonLat> path = null;
+    
+    @JsonProperty("direction")
+    public int direction;
+    
+    @JsonProperty("routeId")
+    public Integer routeId;
+    
+    @JsonProperty("stopIDs")
+    public List<Integer> stopIDs = null;
 
-	
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(path).append(direction)
-			.append(routeId).append(stopIDs).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+            .append(path).append(direction)
+            .append(routeId).append(stopIDs).toHashCode();
+    }
 
-	@Override
-	public boolean equals(Object other) {
-		if (other == this) {
-			return true;
-		}
-		if ((other instanceof TransportRoute) == false) {
-			return false;
-		}
-		TransportRoute rhs = ((TransportRoute) other);
-		return new EqualsBuilder().append(path, rhs.path)
-			.append(direction, rhs.direction).append(routeId, rhs.routeId)
-			.append(stopIDs, rhs.stopIDs).isEquals();
-	}
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if ((other instanceof TransportRoute) == false) {
+            return false;
+        }
+        TransportRoute rhs = ((TransportRoute) other);
+        return new EqualsBuilder().append(path, rhs.path)
+            .append(direction, rhs.direction).append(routeId, rhs.routeId)
+            .append(stopIDs, rhs.stopIDs).isEquals();
+    }
 }

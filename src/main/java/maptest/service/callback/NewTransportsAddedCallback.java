@@ -6,5 +6,5 @@ import maptest.service.data.Transport;
 
 public interface NewTransportsAddedCallback {
 
-	void onNewTransportsAdded(List<Transport> transports);
+    void onNewTransportsAdded(List<Transport> transports);
 }
