@@ -68,7 +68,7 @@ public class LocationPointApproxymator {
         
         double v_mean = recentLocationPoint.velocity / 3.6;
                 
-        System.out.println(recentLocationPoint.velocity);
+        //System.out.println(recentLocationPoint.velocity);
         
         /* 3) Получаем аппроксимированное расстояние */
         
