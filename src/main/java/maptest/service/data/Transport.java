@@ -1,9 +1,11 @@
 package maptest.service.data;
 
-import java.util.Deque;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import maptest.model.routes.TransportRoute;
+import maptest.service.eval.LocationPointApproxymator;
 
 
 public class Transport {
@@ -19,7 +21,7 @@ public class Transport {
     
     protected TransportRoute[] routes = new TransportRoute[2]; // 2 directions
     
-    protected Deque<LocationPoint> locations = new LinkedList<>();
+    protected LinkedList<LocationPoint> locations = new LinkedList<>();
 
     protected LocationPoint approximatedLocationPoint;
     
@@ -51,20 +53,32 @@ public class Transport {
     
     public synchronized void addLocationPoint(LocationPoint locationPoint) {
         
-        // Check if timestamp already exists
+        // Check if this timestamp already exists
         if (!locations.isEmpty()) {
             if (locations.getLast().timestamp.equals(locationPoint.timestamp)) {
                 return;
             }
         }
-        
+
         locations.add(locationPoint);
+        
+        if (locations.size() > LocationPointApproxymator.RECENT_LOCATION_POINTS) {
+            locations.pop();
+        }
+        
+        approximatedLocationPoint = locationPoint;
     }
     
     
     public synchronized LocationPoint getRecentLocationPoint() {
         
         return locations.getLast();
+    }
+    
+    
+    public synchronized List<LocationPoint> getRecentLocationPoints() {
+        
+        return new ArrayList<LocationPoint>(locations);
     }
     
     

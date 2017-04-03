@@ -17,6 +17,10 @@ import maptest.service.callback.NewTransportsAddedCallback;
 import maptest.service.data.LocationPoint;
 import maptest.service.data.Transport;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 
 public class TransportLocationService {
 
@@ -28,6 +32,10 @@ public class TransportLocationService {
     
     
     NewTransportsAddedCallback newTransportsAddedCallback;
+    
+     
+    DateTimeFormatter dateTimeFormatter =
+        DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
     
     
     public TransportLocationService(
@@ -110,7 +118,7 @@ public class TransportLocationService {
                         
             LocationPoint locationPoint =
                 new LocationPoint(
-                    location.timestamp,
+                    DateTime.parse(location.timestamp, dateTimeFormatter),
                     location.position,
                     location.direction,
                     location.velocity,

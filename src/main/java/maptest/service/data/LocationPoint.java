@@ -1,11 +1,13 @@
 package maptest.service.data;
 
+import org.joda.time.DateTime;
+
 import maptest.model.LonLat;
 
 
 public class LocationPoint {
     
-    public String timestamp;
+    public DateTime timestamp;
   
     public LonLat position;
     
@@ -17,7 +19,7 @@ public class LocationPoint {
 
     
     public LocationPoint(
-        String timestamp,
+        DateTime timestamp,
         LonLat position,
         int direction,
         int velocity,

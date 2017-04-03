@@ -1,6 +1,7 @@
 package maptest;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -12,6 +13,7 @@ import maptest.service.TransportLocationService;
 import maptest.service.callback.NewTransportsAddedCallback;
 import maptest.service.data.LocationPoint;
 import maptest.service.data.Transport;
+import maptest.service.eval.LocationPointApproxymator;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import de.fhpotsdam.unfolding.UnfoldingMap;
@@ -43,17 +45,24 @@ public class MapTestApplet extends PApplet {
         @Override
         public void draw(PGraphics pg, float x, float y) {
 
-            LocationPoint locationPoint = transport.getRecentLocationPoint();
+            LocationPoint recentLocationPoint = transport.getRecentLocationPoint();
+            LocationPoint approximatedLocationPoint = transport.getApproximatedLocationPoint();
 
             // 1) Move marker to next location
             
-            setLocation(toLocation(locationPoint.position));
+            setLocation(toLocation(approximatedLocationPoint.position));
 
-            // 2) Draw route if marker is selected
             
             if (isSelected()) {
-
-                TransportRoute route = transport.getRoute(locationPoint.directionId);
+                
+                // 2) Draw recent location
+                
+                ScreenPosition recent = map.getScreenPosition(toLocation(recentLocationPoint.position));
+                ellipse(recent.x, recent.y, 10, 10);
+                
+                // 3) Draw route
+                
+                TransportRoute route = transport.getRoute(recentLocationPoint.directionId);
             
                 if (route != null) {
                     
@@ -82,14 +91,17 @@ public class MapTestApplet extends PApplet {
     
     public void setup() {
         
+        /* 1) Setun map */
+        
         size(1680, 1050);
         map = new UnfoldingMap(this, new OpenStreetMapProvider());
         map.zoomToLevel(10);
         map.panTo(new Location(60.0, 30.0));
  
-        // Add mouse and keyboard interactions
         MapUtils.createDefaultEventDispatcher(this, map);
 
+        
+        /* 2) Init TransportLocationService */
         
         transportLocationService = new TransportLocationService(
             
@@ -113,6 +125,9 @@ public class MapTestApplet extends PApplet {
                 }
             });
         
+        
+        /* 3) Locations update task */
+        
         new Timer().scheduleAtFixedRate(new TimerTask() {
                 
                 @Override
@@ -134,8 +149,36 @@ public class MapTestApplet extends PApplet {
                 }
             }, 
             0,
-            5000
+            10000 // every 10 seconds 
         );
+        
+        
+        /* 4) Locations approximation update task */
+        
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+                
+                @Override
+                public void run() {
+                    
+                    List<Marker> markers;
+                    
+                    synchronized (map) {
+                        
+                        markers = new ArrayList<Marker>(
+                            map.getDefaultMarkerManager().getMarkers());
+                    }
+                    
+                    for (Marker marker : markers) {
+                                                    
+                        LocationPointApproxymator.applyApproximation(
+                            ((TransportMarker) marker).transport);
+                    }
+                }
+            }, 
+            0,
+            100 // every 0.1 seconds 
+        );
+        
     }
     
     
