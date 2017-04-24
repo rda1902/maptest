@@ -88,8 +88,12 @@ public class LocationPointApproxymator {
         if (recentLocationInPath == null) {
             
             /* 2.1) Find nearest point in path */
-            
-            recentLocationInPath = locationInPathIndex.project(recentLocationPoint.coord);
+
+            try {
+                recentLocationInPath = locationInPathIndex.project(recentLocationPoint.coord);
+            }catch (Exception e){
+
+            }
             
             if (recentLocationInPath == null) {
                 System.err.println("recentLocationInPath is not valid!");
